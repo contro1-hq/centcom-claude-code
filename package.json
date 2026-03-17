@@ -1,0 +1,40 @@
+{
+  "name": "@centcom/claude-code",
+  "version": "0.1.0",
+  "description": "CENTCOM approval hook for Claude Code PreToolUse",
+  "type": "module",
+  "main": "dist/hook.js",
+  "types": "dist/hook.d.ts",
+  "bin": {
+    "centcom-claude-code": "dist/hook.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "centcom",
+    "claude-code",
+    "approval",
+    "hook",
+    "hitl"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
