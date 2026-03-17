@@ -21,7 +21,6 @@ const DEFAULT_TIMEOUT_MS = 300_000;
 const DEFAULT_POLL_INTERVAL_MS = 3_000;
 const DEFAULT_PRIORITY: "normal" | "urgent" = "urgent";
 const DEFAULT_FALLBACK: PermissionDecision = "deny";
-const DEFAULT_CALLBACK_URL = "https://centcom.local/claude-code";
 
 function readLocalConfig(): FileConfig {
   const path = join(process.cwd(), ".centcom.json");
@@ -68,7 +67,7 @@ export function loadConfig(): CentcomClaudeConfig {
   const slaValue = env.CENTCOM_SLA_MINUTES ?? file.CENTCOM_SLA_MINUTES;
   const slaMinutes = slaValue !== undefined ? Number(slaValue) : undefined;
   const requiredRole = env.CENTCOM_REQUIRED_ROLE ?? file.CENTCOM_REQUIRED_ROLE;
-  const callbackUrl = env.CENTCOM_CALLBACK_URL ?? file.CENTCOM_CALLBACK_URL ?? DEFAULT_CALLBACK_URL;
+  const callbackUrl = env.CENTCOM_CALLBACK_URL ?? file.CENTCOM_CALLBACK_URL;
 
   return {
     apiKey,
@@ -80,6 +79,6 @@ export function loadConfig(): CentcomClaudeConfig {
     slaMinutes: Number.isFinite(slaMinutes as number) ? slaMinutes : undefined,
     requiredRole: requiredRole || undefined,
     fallback,
-    callbackUrl,
+    callbackUrl: callbackUrl || undefined,
   };
 }

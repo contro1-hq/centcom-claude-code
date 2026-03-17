@@ -7,7 +7,9 @@ function redactSecrets(text: string): string {
   return text
     .replace(/(cc_(?:live|test)_[a-zA-Z0-9_-]{8,})/g, "[REDACTED_API_KEY]")
     .replace(/(whsec_[a-zA-Z0-9_-]{8,})/g, "[REDACTED_WEBHOOK_SECRET]")
-    .replace(/(Bearer\s+)[^\s]+/gi, "$1[REDACTED_TOKEN]");
+    .replace(/(Bearer\s+)[^\s]+/gi, "$1[REDACTED_TOKEN]")
+    .replace(/("?(?:api[_-]?key|token|secret|password)"?\s*:\s*)"[^"]*"/gi, '$1"[REDACTED]"')
+    .replace(/((?:api[_-]?key|token|secret|password)\s*=\s*)[^\s]+/gi, "$1[REDACTED]");
 }
 
 function clip(text: string, size = MAX_PREVIEW): string {
@@ -66,6 +68,7 @@ export function formatRequest(input: HookInput): {
       source: "claude-code",
       session_id: input.session_id,
       tool_name: tool,
+      tool_input_hash: createHash("sha256").update(stableStringify(toolInput)).digest("hex").slice(0, 24),
       cwd: input.cwd ?? "",
     },
   };

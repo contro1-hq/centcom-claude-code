@@ -26,5 +26,5 @@ export interface CentcomClaudeConfig {
   slaMinutes?: number;
   requiredRole?: string;
   fallback: PermissionDecision;
-  callbackUrl: string;
+  callbackUrl?: string;
 }

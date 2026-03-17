@@ -23,7 +23,7 @@ Set env vars (or use `.centcom.json` in working directory):
 - `CENTCOM_SLA_MINUTES` (optional)
 - `CENTCOM_REQUIRED_ROLE` (optional)
 - `CENTCOM_FALLBACK` (`deny` default; supported: `deny`, `ask`, `allow`)
-- `CENTCOM_CALLBACK_URL` (default internal placeholder, can be overridden)
+- `CENTCOM_CALLBACK_URL` (optional; only set when you also want webhook callbacks)
 
 ## Claude Code Hook Setup
 
@@ -34,7 +34,7 @@ Add this in `.claude/settings.json`:
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "",
+        "matcher": "Write|Edit|Bash",
         "command": "centcom-claude-code",
         "timeout": 310000
       }
@@ -58,3 +58,8 @@ npm install
 npm run build
 npm pack
 ```
+
+## Skill
+
+This repo includes an integration skill:
+- `skills/centcom-claude-code.md`

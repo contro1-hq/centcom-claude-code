@@ -88,17 +88,24 @@ async function main(): Promise<void> {
   const idempotencyKey = buildIdempotencyKey(input);
 
   try {
-    const request = await client.createRequest({
+    const requestPayload: Record<string, unknown> = {
       type: "approval",
       question: formatted.question,
       context: formatted.context,
-      callback_url: config.callbackUrl,
       priority: config.priority,
       required_role: config.requiredRole,
-      metadata: formatted.metadata,
+      metadata: {
+        ...formatted.metadata,
+        idempotency_key: idempotencyKey,
+      },
       sla_minutes: config.slaMinutes,
       idempotency_key: idempotencyKey,
-    });
+    };
+    if (config.callbackUrl) {
+      requestPayload.callback_url = config.callbackUrl;
+    }
+
+    const request = await client.createRequest(requestPayload as any);
 
     activeRequestId = request.id;
 
