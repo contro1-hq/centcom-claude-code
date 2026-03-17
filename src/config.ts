@@ -15,7 +15,7 @@ interface FileConfig {
   CENTCOM_CALLBACK_URL?: string;
 }
 
-const DEFAULT_BASE_URL = "https://contro1.com/api/centcom/v1";
+const DEFAULT_BASE_URL = "https://api.contro1.com/api/centcom/v1";
 const DEFAULT_TOOLS = "Write,Edit,Bash";
 const DEFAULT_TIMEOUT_MS = 300_000;
 const DEFAULT_POLL_INTERVAL_MS = 3_000;

@@ -1,7 +1,7 @@
 {
   "name": "@contro1/claude-code",
-  "version": "0.1.1",
-  "description": "CENTCOM approval hook for Claude Code PreToolUse",
+  "version": "0.1.2",
+  "description": "CENTCOM approval hook for Claude Code PermissionRequest",
   "type": "module",
   "main": "dist/hook.js",
   "types": "dist/hook.d.ts",

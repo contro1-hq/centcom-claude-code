@@ -51,6 +51,18 @@ Add this in `.claude/settings.json`:
 - Timeout -> request cancel attempt + `deny`.
 - API errors -> fallback decision (`CENTCOM_FALLBACK`).
 
+## Quick Verify
+
+```bash
+npm view @contro1/claude-code version
+```
+
+## Related Packages
+
+- [`centcom`](https://github.com/contro1-hq/centcom) for Python integrations
+- [`@contro1/sdk`](https://github.com/contro1-hq/centcom-sdk) for Node/TypeScript SDK usage
+- [`centcom-langgraph`](https://github.com/contro1-hq/centcom-langgraph) for LangGraph integrations
+
 ## Development
 
 ```bash

@@ -1,6 +1,6 @@
 ---
 name: centcom-claude-code
-description: Guide for integrating CENTCOM approvals into Claude Code PreToolUse hooks with secure defaults.
+description: Guide for integrating CENTCOM approvals into Claude Code PermissionRequest hooks with secure defaults.
 user_invocable: true
 ---
 
@@ -10,12 +10,12 @@ You are helping a developer integrate `@contro1/claude-code` so Claude tool call
 
 ## Step 1: Confirm Runtime and Policy
 
-Before editing files, confirm:
+Before editing files, confirm with the user:
 - Which tools require approvals (`Write`, `Edit`, `Bash`, or custom set)
 - Fallback policy on outages/timeouts (`deny` recommended for risky tools)
-- Whether they need polling-only mode or optional webhook callback
+- Whether they already have a CENTCOM API key (`cc_live_...`) or need to generate one
 
-If unclear, default to deny-by-default for risky tools.
+If unclear, default to deny-by-default for risky tools and `Write|Edit|Bash` matcher.
 
 ## Step 2: Install Connector
 
@@ -23,51 +23,81 @@ If unclear, default to deny-by-default for risky tools.
 npm install -g @contro1/claude-code
 ```
 
-## Step 3: Configure Secrets Safely
-
-Set environment variables in a secure local secret store:
-
+Verify installation:
 ```bash
-CENTCOM_API_KEY=cc_live_xxx
-CENTCOM_FALLBACK=deny
-CENTCOM_TOOLS=Write,Edit,Bash
-CENTCOM_TIMEOUT=300000
-CENTCOM_POLL_INTERVAL=3000
+centcom-claude-code --version
 ```
 
-Optional:
-- `CENTCOM_BASE_URL`
-- `CENTCOM_REQUIRED_ROLE`
-- `CENTCOM_SLA_MINUTES`
-- `CENTCOM_CALLBACK_URL` (only if webhook callbacks are also desired)
+## Step 3: Configure Environment Variables
+
+IMPORTANT: Store secrets in the **user-level** Claude settings file (`~/.claude/settings.json`), NOT in the project `.claude/settings.json` — to avoid committing keys to git.
+
+Add an `env` block to `~/.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "CENTCOM_API_KEY": "cc_live_xxx",
+    "CENTCOM_BASE_URL": "https://api.contro1.com/api/centcom/v1",
+    "CENTCOM_FALLBACK": "deny",
+    "CENTCOM_TOOLS": "Write,Edit,Bash",
+    "CENTCOM_TIMEOUT": "300000",
+    "CENTCOM_POLL_INTERVAL": "3000"
+  }
+}
+```
+
+Ask the user to replace `cc_live_xxx` with their actual API key. They can generate one in the CENTCOM dashboard under Settings > API Keys.
+
+`CENTCOM_BASE_URL` is REQUIRED — do not skip it.
+
+Optional variables:
+- `CENTCOM_REQUIRED_ROLE` — require specific operator role
+- `CENTCOM_SLA_MINUTES` — expected response time
+- `CENTCOM_CALLBACK_URL` — only if webhook callbacks are desired
 
 Never commit API keys to repository files.
 
 ## Step 4: Add Claude Hook
 
-Update `.claude/settings.json`:
+Update the **project-level** `.claude/settings.json` with the PermissionRequest hook.
+
+IMPORTANT: The hook schema requires a nested `hooks` array inside each matcher entry:
 
 ```json
 {
   "hooks": {
-    "PreToolUse": [
+    "PermissionRequest": [
       {
         "matcher": "Write|Edit|Bash",
-        "command": "centcom-claude-code",
-        "timeout": 310000
+        "hooks": [
+          {
+            "type": "command",
+            "command": "centcom-claude-code",
+            "timeout": 310
+          }
+        ]
       }
     ]
   }
 }
 ```
 
-## Step 5: Validate Decision Flow
+Note: `timeout` is in **seconds** (not milliseconds). 310s gives a buffer above the 300s CENTCOM polling timeout.
 
-Expected behavior:
-- Operator approves -> connector returns `allow`
-- Operator rejects -> connector returns `deny`
-- Timeout -> request is canceled and connector returns `deny`
-- API/transport failure -> fallback decision from `CENTCOM_FALLBACK`
+## Step 5: Validate Connection
+
+Test the connector end-to-end by piping a simulated tool call:
+
+```bash
+echo '{"tool_name":"Bash","tool_input":{"command":"echo hello"}}' | centcom-claude-code
+```
+
+Expected responses:
+- `{"hookSpecificOutput":{"permissionDecision":"allow"}}` — CENTCOM reachable, auto-approved or operator approved
+- `{"hookSpecificOutput":{"permissionDecision":"deny"}}` — denied by operator or fallback
+
+If you see HTML in the error or "unexpected token" errors, the `CENTCOM_BASE_URL` is wrong or missing.
 
 ## Step 6: Apply Security Hardening
 
@@ -90,6 +120,9 @@ Expected behavior:
 
 ## Related Skills
 
-- `centcom-python-sdk` for Python backend integrations
-- `centcom-js-sdk` for Node/TypeScript SDK integrations
-- `centcom-langgraph` for LangGraph pause/resume flow
+- Python SDK skill:
+  `https://github.com/contro1-hq/centcom/blob/main/skills/centcom-python-sdk.md`
+- JS SDK skill:
+  `https://github.com/contro1-hq/centcom-sdk/blob/main/skills/centcom-js-sdk.md`
+- LangGraph skill:
+  `https://github.com/contro1-hq/centcom-langgraph/blob/main/skills/centcom-langgraph.md`
