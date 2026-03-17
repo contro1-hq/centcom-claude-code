@@ -1,5 +1,5 @@
 {
-  "name": "@centcom/claude-code",
+  "name": "@contro1/claude-code",
   "version": "0.1.0",
   "description": "CENTCOM approval hook for Claude Code PreToolUse",
   "type": "module",
@@ -29,7 +29,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@contro1/sdk": "^1.0.0"
+  },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.4.0"

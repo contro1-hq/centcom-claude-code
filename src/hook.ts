@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { stdin, stdout, stderr } from "node:process";
-import { CentcomClient } from "./centcomClient.js";
+import { CentcomClient } from "@contro1/sdk";
 import { loadConfig } from "./config.js";
 import { buildIdempotencyKey, formatRequest } from "./formatter.js";
 import type { HookInput, HookOutput, PermissionDecision } from "./types.js";
@@ -80,7 +80,7 @@ async function main(): Promise<void> {
   const client = new CentcomClient({
     apiKey: config.apiKey,
     baseUrl: config.baseUrl,
-    timeoutMs: Math.min(config.timeoutMs, 30_000),
+    timeout: Math.min(config.timeoutMs, 30_000),
   });
   activeClient = client;
 

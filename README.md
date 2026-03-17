@@ -1,4 +1,4 @@
-# @centcom/claude-code
+# @contro1/claude-code
 
 Route Claude Code `PreToolUse` approvals to CENTCOM.
 
@@ -7,7 +7,7 @@ The hook reads Claude tool calls from stdin, creates an approval request in CENT
 ## Install
 
 ```bash
-npm install -g @centcom/claude-code
+npm install -g @contro1/claude-code
 ```
 
 ## Configuration
