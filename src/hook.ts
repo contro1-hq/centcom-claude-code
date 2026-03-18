@@ -1,13 +1,15 @@
 #!/usr/bin/env node
-import { stdin, stdout, stderr } from "node:process";
+import { writeSync } from "node:fs";
+import { stdin, stderr } from "node:process";
 import { CentcomClient } from "@contro1/sdk";
 import { loadConfig } from "./config.js";
 import { buildIdempotencyKey, formatRequest } from "./formatter.js";
-import type { HookInput, HookOutput, PermissionDecision } from "./types.js";
+import type { HookInput, HookBehavior } from "./types.js";
 
 let activeRequestId: string | null = null;
 let activeClient: CentcomClient | null = null;
-let fallbackDecision: PermissionDecision = "deny";
+let fallbackDecision: HookBehavior = "deny";
+let decided = false;
 
 function readStdin(): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -22,14 +24,26 @@ function readStdin(): Promise<string> {
 }
 
 function writeDecision(
-  permissionDecision: PermissionDecision,
+  behavior: HookBehavior,
   systemMessage?: string,
-): never {
-  const output: HookOutput = {
-    hookSpecificOutput: { permissionDecision },
-    ...(systemMessage ? { systemMessage } : {}),
+): void {
+  if (decided) return;
+  decided = true;
+  const output = {
+    hookSpecificOutput: {
+      hookEventName: "PermissionRequest",
+      decision: {
+        behavior,
+        ...(behavior === "deny" && systemMessage ? { message: systemMessage } : {}),
+      },
+    },
   };
-  stdout.write(JSON.stringify(output));
+  const json = JSON.stringify(output);
+  try {
+    writeSync(1, json);
+  } catch {
+    process.stdout.write(json);
+  }
   process.exit(0);
 }
 
@@ -43,8 +57,7 @@ async function safeCancel(): Promise<void> {
 }
 
 function registerSignalHandlers(): void {
-  const handler = async () => {
-    await safeCancel();
+  const handler = () => {
     writeDecision(fallbackDecision, "Approval interrupted before decision.");
   };
   process.on("SIGINT", handler);
@@ -75,6 +88,7 @@ async function main(): Promise<void> {
 
   if (!config.tools.has(input.tool_name)) {
     writeDecision("allow");
+    return;
   }
 
   const client = new CentcomClient({
@@ -106,7 +120,6 @@ async function main(): Promise<void> {
     }
 
     const request = await client.createRequest(requestPayload as any);
-
     activeRequestId = request.id;
 
     const result = await client.waitForResponse(
@@ -118,6 +131,7 @@ async function main(): Promise<void> {
     const approved = responseApproved((result.response as Record<string, unknown>) ?? null);
     writeDecision(approved ? "allow" : "deny");
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown approval error";
     if (
       error instanceof Error &&
       error.message.toLowerCase().includes("timeout") &&
@@ -125,9 +139,9 @@ async function main(): Promise<void> {
     ) {
       await safeCancel();
       writeDecision("deny", "Approval timed out and was denied.");
+      return;
     }
 
-    const message = error instanceof Error ? error.message : "Unknown approval error";
     stderr.write(`centcom-claude-code: ${message}\n`);
     writeDecision(config.fallback, `CENTCOM unavailable, fallback=${config.fallback}.`);
   }

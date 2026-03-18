@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { CentcomClaudeConfig, PermissionDecision } from "./types.js";
+import type { CentcomClaudeConfig, HookBehavior } from "./types.js";
 
 interface FileConfig {
   CENTCOM_API_KEY?: string;
@@ -10,7 +10,7 @@ interface FileConfig {
   CENTCOM_POLL_INTERVAL?: number;
   CENTCOM_PRIORITY?: "normal" | "urgent";
   CENTCOM_SLA_MINUTES?: number;
-  CENTCOM_FALLBACK?: PermissionDecision;
+  CENTCOM_FALLBACK?: HookBehavior;
   CENTCOM_REQUIRED_ROLE?: string;
   CENTCOM_CALLBACK_URL?: string;
 }
@@ -20,7 +20,7 @@ const DEFAULT_TOOLS = "Write,Edit,Bash";
 const DEFAULT_TIMEOUT_MS = 300_000;
 const DEFAULT_POLL_INTERVAL_MS = 3_000;
 const DEFAULT_PRIORITY: "normal" | "urgent" = "urgent";
-const DEFAULT_FALLBACK: PermissionDecision = "deny";
+const DEFAULT_FALLBACK: HookBehavior = "deny";
 
 function readLocalConfig(): FileConfig {
   const path = join(process.cwd(), ".centcom.json");
@@ -61,8 +61,8 @@ export function loadConfig(): CentcomClaudeConfig {
   const priorityRaw = env.CENTCOM_PRIORITY ?? file.CENTCOM_PRIORITY ?? DEFAULT_PRIORITY;
   const priority = priorityRaw === "normal" ? "normal" : "urgent";
 
-  const fallbackRaw = (env.CENTCOM_FALLBACK ?? file.CENTCOM_FALLBACK ?? DEFAULT_FALLBACK) as PermissionDecision;
-  const fallback: PermissionDecision = fallbackRaw === "ask" || fallbackRaw === "allow" ? fallbackRaw : "deny";
+  const fallbackRaw = (env.CENTCOM_FALLBACK ?? file.CENTCOM_FALLBACK ?? DEFAULT_FALLBACK) as HookBehavior;
+  const fallback: HookBehavior = fallbackRaw === "allow" ? "allow" : "deny";
 
   const slaValue = env.CENTCOM_SLA_MINUTES ?? file.CENTCOM_SLA_MINUTES;
   const slaMinutes = slaValue !== undefined ? Number(slaValue) : undefined;

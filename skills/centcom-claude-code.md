@@ -93,9 +93,20 @@ Test the connector end-to-end by piping a simulated tool call:
 echo '{"tool_name":"Bash","tool_input":{"command":"echo hello"}}' | centcom-claude-code
 ```
 
-Expected responses:
-- `{"hookSpecificOutput":{"permissionDecision":"allow"}}` — CENTCOM reachable, auto-approved or operator approved
-- `{"hookSpecificOutput":{"permissionDecision":"deny"}}` — denied by operator or fallback
+Expected response format:
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PermissionRequest",
+    "decision": {
+      "behavior": "allow"
+    }
+  }
+}
+```
+
+- `"behavior": "allow"` — operator approved (or tool not in CENTCOM_TOOLS)
+- `"behavior": "deny"` — operator denied, timed out, or fallback applied
 
 If you see HTML in the error or "unexpected token" errors, the `CENTCOM_BASE_URL` is wrong or missing.
 
@@ -105,6 +116,10 @@ If you see HTML in the error or "unexpected token" errors, the `CENTCOM_BASE_URL
 - Ensure redaction is enabled before sending tool input/context.
 - Use idempotency to avoid duplicate approval requests on retries.
 - Do not print raw secrets in logs or system messages.
+
+## Architecture Note
+
+The Claude Code connector uses **polling** (`waitForResponse`) because hooks are blocking stdin→stdout processes. Other CENTCOM integrations (Slack notifications, dashboard, LangGraph) use **webhooks** by default to minimize server load.
 
 ## Common Patterns
 

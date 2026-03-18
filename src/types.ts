@@ -1,4 +1,4 @@
-export type PermissionDecision = "allow" | "deny" | "ask";
+export type HookBehavior = "allow" | "deny";
 
 export interface HookInput {
   session_id: string;
@@ -7,13 +7,17 @@ export interface HookInput {
   cwd?: string;
   permission_mode?: string;
   hook_event_name?: string;
+  transcript_path?: string;
 }
 
 export interface HookOutput {
   hookSpecificOutput: {
-    permissionDecision: PermissionDecision;
+    hookEventName: "PermissionRequest";
+    decision: {
+      behavior: HookBehavior;
+      message?: string;
+    };
   };
-  systemMessage?: string;
 }
 
 export interface CentcomClaudeConfig {
@@ -25,6 +29,6 @@ export interface CentcomClaudeConfig {
   priority: "normal" | "urgent";
   slaMinutes?: number;
   requiredRole?: string;
-  fallback: PermissionDecision;
+  fallback: HookBehavior;
   callbackUrl?: string;
 }
