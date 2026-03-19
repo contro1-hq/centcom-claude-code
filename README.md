@@ -19,6 +19,15 @@ The connector uses **polling** to wait for the operator's decision — this is r
 npm install -g @contro1/claude-code
 ```
 
+## macOS Compatibility
+
+The connector works on macOS.
+
+Requirements:
+- Node.js 18 or newer
+- Global npm bin on your `PATH` (so `centcom-claude-code` is executable)
+- Claude user settings at `~/.claude/settings.json`
+
 ## Configuration
 
 Set env vars in `~/.claude/settings.json` (user-level, not committed to git):

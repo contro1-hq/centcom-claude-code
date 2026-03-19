@@ -28,6 +28,10 @@ Verify installation:
 centcom-claude-code --version
 ```
 
+macOS note:
+- The public connector works on macOS as long as `node >= 18` is installed and the global npm bin is on `PATH`.
+- Settings path is the same: `~/.claude/settings.json`.
+
 ## Step 3: Configure Environment Variables
 
 IMPORTANT: Store secrets in the **user-level** Claude settings file (`~/.claude/settings.json`), NOT in the project `.claude/settings.json` — to avoid committing keys to git.
@@ -109,6 +113,17 @@ Expected response format:
 - `"behavior": "deny"` — operator denied, timed out, or fallback applied
 
 If you see HTML in the error or "unexpected token" errors, the `CENTCOM_BASE_URL` is wrong or missing.
+
+Mini example (manager-only approvals for risky tools):
+```json
+{
+  "env": {
+    "CENTCOM_REQUIRED_ROLE": "manager",
+    "CENTCOM_TOOLS": "Write,Edit,Bash",
+    "CENTCOM_FALLBACK": "deny"
+  }
+}
+```
 
 ## Step 6: Apply Security Hardening
 
