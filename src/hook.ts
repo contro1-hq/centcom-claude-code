@@ -115,6 +115,15 @@ async function main(): Promise<void> {
       sla_minutes: config.slaMinutes,
       idempotency_key: idempotencyKey,
     };
+    if (config.requiredApprovals && config.requiredApprovals > 1) {
+      requestPayload.approval_policy = {
+        mode: "threshold",
+        required_approvals: config.requiredApprovals,
+        required_roles: config.requiredRole ? [config.requiredRole] : undefined,
+        separation_of_duties: true,
+        fail_closed_on_timeout: true,
+      };
+    }
     if (config.callbackUrl) {
       requestPayload.callback_url = config.callbackUrl;
     }

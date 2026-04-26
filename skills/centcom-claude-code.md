@@ -46,7 +46,8 @@ Add an `env` block to `~/.claude/settings.json`:
     "CENTCOM_FALLBACK": "deny",
     "CENTCOM_TOOLS": "Write,Edit,Bash",
     "CENTCOM_TIMEOUT": "300000",
-    "CENTCOM_POLL_INTERVAL": "3000"
+    "CENTCOM_POLL_INTERVAL": "3000",
+    "CENTCOM_REQUIRED_APPROVALS": "2"
   }
 }
 ```
@@ -57,6 +58,7 @@ Ask the user to replace `cc_live_xxx` with their actual API key. They can genera
 
 Optional variables:
 - `CENTCOM_REQUIRED_ROLE` — require specific operator role
+- `CENTCOM_REQUIRED_APPROVALS` — require quorum before returning `allow` to Claude Code
 - `CENTCOM_SLA_MINUTES` — expected response time
 - `CENTCOM_CALLBACK_URL` — only if webhook callbacks are desired
 
@@ -119,6 +121,7 @@ Mini example (manager-only approvals for risky tools):
 {
   "env": {
     "CENTCOM_REQUIRED_ROLE": "manager",
+    "CENTCOM_REQUIRED_APPROVALS": "2",
     "CENTCOM_TOOLS": "Write,Edit,Bash",
     "CENTCOM_FALLBACK": "deny"
   }
@@ -128,6 +131,7 @@ Mini example (manager-only approvals for risky tools):
 ## Step 6: Apply Security Hardening
 
 - Keep fallback as `deny` for risky tools.
+- Use `CENTCOM_REQUIRED_APPROVALS=2` for high-risk write, shell, deploy, payment, deletion, or privilege-change workflows.
 - Ensure redaction is enabled before sending tool input/context.
 - Use idempotency to avoid duplicate approval requests on retries.
 - Do not print raw secrets in logs or system messages.
@@ -135,6 +139,8 @@ Mini example (manager-only approvals for risky tools):
 ## Architecture Note
 
 The Claude Code connector uses **polling** (`waitForResponse`) because hooks are blocking stdin→stdout processes. Other CENTCOM integrations (Slack notifications, dashboard, LangGraph) use **webhooks** by default to minimize server load.
+
+With multi-approval enabled, the first approval records an audit event but does not unblock Claude Code. The hook returns `allow` only after quorum; rejection or timeout returns `deny`.
 
 ## Common Patterns
 

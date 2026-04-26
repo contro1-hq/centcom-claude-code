@@ -40,7 +40,8 @@ Set env vars in `~/.claude/settings.json` (user-level, not committed to git):
     "CENTCOM_TOOLS": "Write,Edit,Bash",
     "CENTCOM_TIMEOUT": "300000",
     "CENTCOM_POLL_INTERVAL": "3000",
-    "CENTCOM_FALLBACK": "deny"
+    "CENTCOM_FALLBACK": "deny",
+    "CENTCOM_REQUIRED_APPROVALS": "2"
   }
 }
 ```
@@ -56,6 +57,7 @@ Set env vars in `~/.claude/settings.json` (user-level, not committed to git):
 | `CENTCOM_FALLBACK` | `deny` | Fallback on errors (`deny` or `allow`) |
 | `CENTCOM_SLA_MINUTES` | — | Expected response time |
 | `CENTCOM_REQUIRED_ROLE` | — | Require specific operator role |
+| `CENTCOM_REQUIRED_APPROVALS` | — | Require quorum before Claude Code receives an allow decision |
 | `CENTCOM_CALLBACK_URL` | — | Optional webhook callback URL |
 
 You can also use a `.centcom.json` file in the working directory with the same keys.
@@ -109,6 +111,7 @@ On denial, a `message` field is included in the `decision` object.
 - Operator denies → `deny`
 - Timeout → cancel request + `deny`
 - API errors → fallback decision (`CENTCOM_FALLBACK`)
+- If `CENTCOM_REQUIRED_APPROVALS` is greater than `1`, Claude Code stays blocked until quorum is met, a reviewer denies, or timeout fails closed.
 
 ## Related Packages
 

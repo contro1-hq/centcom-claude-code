@@ -12,6 +12,7 @@ interface FileConfig {
   CENTCOM_SLA_MINUTES?: number;
   CENTCOM_FALLBACK?: HookBehavior;
   CENTCOM_REQUIRED_ROLE?: string;
+  CENTCOM_REQUIRED_APPROVALS?: number;
   CENTCOM_CALLBACK_URL?: string;
 }
 
@@ -67,6 +68,8 @@ export function loadConfig(): CentcomClaudeConfig {
   const slaValue = env.CENTCOM_SLA_MINUTES ?? file.CENTCOM_SLA_MINUTES;
   const slaMinutes = slaValue !== undefined ? Number(slaValue) : undefined;
   const requiredRole = env.CENTCOM_REQUIRED_ROLE ?? file.CENTCOM_REQUIRED_ROLE;
+  const requiredApprovalsValue = env.CENTCOM_REQUIRED_APPROVALS ?? file.CENTCOM_REQUIRED_APPROVALS;
+  const requiredApprovals = requiredApprovalsValue !== undefined ? Number(requiredApprovalsValue) : undefined;
   const callbackUrl = env.CENTCOM_CALLBACK_URL ?? file.CENTCOM_CALLBACK_URL;
 
   return {
@@ -78,6 +81,9 @@ export function loadConfig(): CentcomClaudeConfig {
     priority,
     slaMinutes: Number.isFinite(slaMinutes as number) ? slaMinutes : undefined,
     requiredRole: requiredRole || undefined,
+    requiredApprovals: Number.isFinite(requiredApprovals as number) && (requiredApprovals as number) > 1
+      ? Math.min(Math.max(requiredApprovals as number, 2), 20)
+      : undefined,
     fallback,
     callbackUrl: callbackUrl || undefined,
   };

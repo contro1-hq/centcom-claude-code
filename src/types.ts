@@ -29,6 +29,7 @@ export interface CentcomClaudeConfig {
   priority: "normal" | "urgent";
   slaMinutes?: number;
   requiredRole?: string;
+  requiredApprovals?: number;
   fallback: HookBehavior;
   callbackUrl?: string;
 }
