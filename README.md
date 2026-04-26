@@ -11,7 +11,7 @@ The hook reads Claude tool calls from stdin, creates an approval request in CENT
 3. An operator approves or denies in the CENTCOM dashboard (or via Slack)
 4. The hook returns the decision to Claude Code, which proceeds or blocks accordingly
 
-The connector uses **polling** to wait for the operator's decision — this is required because Claude Code hooks are blocking (stdin → stdout). Other CENTCOM integrations (Slack, dashboard, LangGraph) use webhooks by default for lower server load.
+The connector uses **polling** to wait for the operator's decision - this is required because Claude Code hooks are blocking (stdin → stdout). Other CENTCOM integrations (Slack, dashboard, LangGraph) use webhooks by default for lower server load.
 
 ## Install
 
@@ -55,10 +55,10 @@ Set env vars in `~/.claude/settings.json` (user-level, not committed to git):
 | `CENTCOM_POLL_INTERVAL` | `3000` | Poll interval in ms |
 | `CENTCOM_PRIORITY` | `urgent` | Request priority (`normal` or `urgent`) |
 | `CENTCOM_FALLBACK` | `deny` | Fallback on errors (`deny` or `allow`) |
-| `CENTCOM_SLA_MINUTES` | — | Expected response time |
-| `CENTCOM_REQUIRED_ROLE` | — | Require specific operator role |
-| `CENTCOM_REQUIRED_APPROVALS` | — | Require quorum before Claude Code receives an allow decision |
-| `CENTCOM_CALLBACK_URL` | — | Optional webhook callback URL |
+| `CENTCOM_SLA_MINUTES` | - | Expected response time |
+| `CENTCOM_REQUIRED_ROLE` | - | Require specific operator role |
+| `CENTCOM_REQUIRED_APPROVALS` | - | Require quorum before Claude Code receives an allow decision |
+| `CENTCOM_CALLBACK_URL` | - | Optional webhook callback URL |
 
 You can also use a `.centcom.json` file in the working directory with the same keys.
 
@@ -115,9 +115,9 @@ On denial, a `message` field is included in the `decision` object.
 
 ## Related Packages
 
-- [`centcom`](https://github.com/contro1-hq/centcom) — Python SDK
-- [`@contro1/sdk`](https://github.com/contro1-hq/centcom-sdk) — Node/TypeScript SDK
-- [`centcom-langgraph`](https://github.com/contro1-hq/centcom-langgraph) — LangGraph integration
+- [`centcom`](https://github.com/contro1-hq/centcom) - Python SDK
+- [`@contro1/sdk`](https://github.com/contro1-hq/centcom-sdk) - Node/TypeScript SDK
+- [`centcom-langgraph`](https://github.com/contro1-hq/centcom-langgraph) - LangGraph integration
 
 ## Development
 

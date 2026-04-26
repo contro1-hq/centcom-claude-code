@@ -34,7 +34,7 @@ macOS note:
 
 ## Step 3: Configure Environment Variables
 
-IMPORTANT: Store secrets in the **user-level** Claude settings file (`~/.claude/settings.json`), NOT in the project `.claude/settings.json` — to avoid committing keys to git.
+IMPORTANT: Store secrets in the **user-level** Claude settings file (`~/.claude/settings.json`), NOT in the project `.claude/settings.json` - to avoid committing keys to git.
 
 Add an `env` block to `~/.claude/settings.json`:
 
@@ -54,13 +54,13 @@ Add an `env` block to `~/.claude/settings.json`:
 
 Ask the user to replace `cc_live_xxx` with their actual API key. They can generate one in the CENTCOM dashboard under Settings > API Keys.
 
-`CENTCOM_BASE_URL` is REQUIRED — do not skip it.
+`CENTCOM_BASE_URL` is REQUIRED - do not skip it.
 
 Optional variables:
-- `CENTCOM_REQUIRED_ROLE` — require specific operator role
-- `CENTCOM_REQUIRED_APPROVALS` — require quorum before returning `allow` to Claude Code
-- `CENTCOM_SLA_MINUTES` — expected response time
-- `CENTCOM_CALLBACK_URL` — only if webhook callbacks are desired
+- `CENTCOM_REQUIRED_ROLE` - require specific operator role
+- `CENTCOM_REQUIRED_APPROVALS` - require quorum before returning `allow` to Claude Code
+- `CENTCOM_SLA_MINUTES` - expected response time
+- `CENTCOM_CALLBACK_URL` - only if webhook callbacks are desired
 
 Never commit API keys to repository files.
 
@@ -111,8 +111,8 @@ Expected response format:
 }
 ```
 
-- `"behavior": "allow"` — operator approved (or tool not in CENTCOM_TOOLS)
-- `"behavior": "deny"` — operator denied, timed out, or fallback applied
+- `"behavior": "allow"` - operator approved (or tool not in CENTCOM_TOOLS)
+- `"behavior": "deny"` - operator denied, timed out, or fallback applied
 
 If you see HTML in the error or "unexpected token" errors, the `CENTCOM_BASE_URL` is wrong or missing.
 
