@@ -131,3 +131,20 @@ npm pack
 
 This repo includes an integration skill for Claude Code:
 - `skills/centcom-claude-code.md`
+
+## Request vs log
+
+- Use a Contro1 request when Claude Code asks to run a risky write/edit/shell action.
+- Use an audit record when a hook allows an action automatically but the org still needs a durable trail.
+
+```ts
+await client.logAction({
+  action: 'claude_code.command_allowed',
+  summary: 'Allowed read-only command: rg "invoice"',
+  source: { integration: 'claude-code', workflow_id: 'permission-hook' },
+  outcome: 'success',
+  thread_id: threadId,
+});
+```
+
+For a follow-up after a human answer, include `in_reply_to: { type: 'request', id: requestId }`.
