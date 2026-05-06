@@ -1,23 +1,3 @@
-# Contro1 Claude Code Skill
-
-Use this when connecting Claude Code permission hooks to Contro1.
-
-## Rules
-
-- Send risky writes, edits, shell commands, deploys, and data actions to `createProtocolRequest`.
-- Use `logAction` for allowed autonomous actions that should be auditable.
-- Carry a `thread_id` through a session so requests and logs appear together.
-- Use `in_reply_to` when logging what happened after an operator decision.
-
-```ts
-await client.logAction({
-  action: 'claude_code.permission_applied',
-  summary: 'Applied the operator-approved file edit',
-  source: { integration: 'claude-code', workflow_id: 'permission-hook' },
-  thread_id,
-  in_reply_to: { type: 'request', id: requestId },
-});
-```
 ---
 name: centcom-claude-code
 description: Guide for integrating CENTCOM approvals into Claude Code PermissionRequest hooks with secure defaults.
@@ -81,6 +61,7 @@ Optional variables:
 - `CENTCOM_REQUIRED_APPROVALS` - require quorum before returning `allow` to Claude Code
 - `CENTCOM_SLA_MINUTES` - expected response time
 - `CENTCOM_CALLBACK_URL` - only if webhook callbacks are desired
+- `CENTCOM_CORRELATION_ID` - set this to a stable session or project ID to group all tool approvals from the same Claude Code session into one case timeline in the dashboard (useful for auditing a full coding session or batch operation)
 
 Never commit API keys to repository files.
 
@@ -167,6 +148,7 @@ With multi-approval enabled, the first approval records an audit event but does 
 ### Strict Production Policy
 - `CENTCOM_FALLBACK=deny`
 - approvals on `Write|Edit|Bash`
+- `CENTCOM_CORRELATION_ID` set to a project or session ID for grouped case timeline
 - short audit-friendly metadata per request
 
 ### Developer-Friendly Setup
@@ -179,14 +161,12 @@ With multi-approval enabled, the first approval records an audit event but does 
 - Python SDK skill:
   `https://github.com/contro1-hq/centcom/blob/main/skills/centcom-python-sdk.md`
 - JS SDK skill:
-  `https://github.com/contro1-hq/centcom-sdk/blob/main/skills/centcom-typescript-sdk.md`
+  `https://github.com/contro1-hq/centcom-sdk/blob/main/skills/centcom-js-sdk.md`
 - LangGraph skill:
   `https://github.com/contro1-hq/centcom-langgraph/blob/main/skills/centcom-langgraph.md`
 
-## Full reference links
+## Governance readiness
 
-- Claude Code connector repo: https://github.com/contro1-hq/centcom-claude-code
-- Skill file source: https://github.com/contro1-hq/centcom-claude-code/blob/main/skills/centcom-claude-code.md
-- TypeScript SDK repo: https://github.com/contro1-hq/centcom-sdk
-- Audit records and threads docs: https://contro1.com/docs/audit-records-and-threads
-- Requests API docs: https://contro1.com/docs/requests-api
+For teams operating under EU or US AI governance requirements, see:
+- https://contro1.com/guides/eu-ai-act-readiness
+- https://contro1.com/guides/us-ai-governance-readiness

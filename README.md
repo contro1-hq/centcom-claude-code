@@ -6,12 +6,12 @@ The hook reads Claude tool calls from stdin, creates an approval request in CENT
 
 ## How It Works
 
-1. Claude Code triggers a `PermissionRequest` hook before executing a tool
-2. The hook sends the tool details to CENTCOM as an approval request
-3. An operator approves or denies in the CENTCOM dashboard (or via Slack)
-4. The hook returns the decision to Claude Code, which proceeds or blocks accordingly
+1. Claude Code triggers a `PermissionRequest` hook before executing a tool.
+2. The hook sends the tool details to CENTCOM as an approval request.
+3. An operator approves or denies in the CENTCOM dashboard (or via Slack).
+4. The hook returns the decision to Claude Code, which proceeds or blocks accordingly.
 
-The connector uses **polling** to wait for the operator's decision - this is required because Claude Code hooks are blocking (stdin → stdout). Other CENTCOM integrations (Slack, dashboard, LangGraph) use webhooks by default for lower server load.
+The connector uses **polling** to wait for the operator's decision — this is required because Claude Code hooks are blocking (stdin → stdout). Other CENTCOM integrations (LangGraph, dashboard) use webhooks by default for lower server load.
 
 ## Install
 
@@ -20,8 +20,6 @@ npm install -g @contro1/claude-code
 ```
 
 ## macOS Compatibility
-
-The connector works on macOS.
 
 Requirements:
 - Node.js 18 or newer
@@ -59,6 +57,7 @@ Set env vars in `~/.claude/settings.json` (user-level, not committed to git):
 | `CENTCOM_REQUIRED_ROLE` | - | Require specific operator role |
 | `CENTCOM_REQUIRED_APPROVALS` | - | Require quorum before Claude Code receives an allow decision |
 | `CENTCOM_CALLBACK_URL` | - | Optional webhook callback URL |
+| `CENTCOM_CORRELATION_ID` | - | Session or project ID; groups all tool approvals from one Claude Code session into one case timeline |
 
 You can also use a `.centcom.json` file in the working directory with the same keys.
 
@@ -115,9 +114,14 @@ On denial, a `message` field is included in the `decision` object.
 
 ## Related Packages
 
-- [`centcom`](https://github.com/contro1-hq/centcom) - Python SDK
-- [`@contro1/sdk`](https://github.com/contro1-hq/centcom-sdk) - Node/TypeScript SDK
-- [`centcom-langgraph`](https://github.com/contro1-hq/centcom-langgraph) - LangGraph integration
+- [`centcom`](https://github.com/contro1-hq/centcom) — Python SDK
+- [`@contro1/sdk`](https://github.com/contro1-hq/centcom-sdk) — Node/TypeScript SDK
+- [`centcom-langgraph`](https://github.com/contro1-hq/centcom-langgraph) — LangGraph integration
+
+## Skill
+
+This repo includes an integration skill for Claude Code:
+- `skills/centcom-claude-code.md`
 
 ## Development
 
@@ -127,24 +131,8 @@ npm run build
 npm pack
 ```
 
-## Skill
+## Governance readiness
 
-This repo includes an integration skill for Claude Code:
-- `skills/centcom-claude-code.md`
-
-## Request vs log
-
-- Use a Contro1 request when Claude Code asks to run a risky write/edit/shell action.
-- Use an audit record when a hook allows an action automatically but the org still needs a durable trail.
-
-```ts
-await client.logAction({
-  action: 'claude_code.command_allowed',
-  summary: 'Allowed read-only command: rg "invoice"',
-  source: { integration: 'claude-code', workflow_id: 'permission-hook' },
-  outcome: 'success',
-  thread_id: threadId,
-});
-```
-
-For a follow-up after a human answer, include `in_reply_to: { type: 'request', id: requestId }`.
+For teams operating AI in regulated environments:
+- [EU AI Act readiness guide](https://contro1.com/guides/eu-ai-act-readiness)
+- [US AI Governance readiness guide](https://contro1.com/guides/us-ai-governance-readiness)
