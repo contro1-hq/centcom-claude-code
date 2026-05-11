@@ -11,7 +11,7 @@ The hook reads Claude tool calls from stdin, creates an approval request in CENT
 3. An operator approves or denies in the CENTCOM dashboard (or via Slack).
 4. The hook returns the decision to Claude Code, which proceeds or blocks accordingly.
 
-The connector uses **polling** to wait for the operator's decision — this is required because Claude Code hooks are blocking (stdin → stdout). Other CENTCOM integrations (LangGraph, dashboard) use webhooks by default for lower server load.
+The connector uses **polling** to wait for the operator's decision - this is required because Claude Code hooks are blocking (stdin → stdout). Other CENTCOM integrations (LangGraph, dashboard) use webhooks by default for lower server load.
 
 ## Install
 
@@ -114,9 +114,9 @@ On denial, a `message` field is included in the `decision` object.
 
 ## Related Packages
 
-- [`centcom`](https://github.com/contro1-hq/centcom) — Python SDK
-- [`@contro1/sdk`](https://github.com/contro1-hq/centcom-sdk) — Node/TypeScript SDK
-- [`centcom-langgraph`](https://github.com/contro1-hq/centcom-langgraph) — LangGraph integration
+- [`centcom`](https://github.com/contro1-hq/centcom) - Python SDK
+- [`@contro1/sdk`](https://github.com/contro1-hq/centcom-sdk) - Node/TypeScript SDK
+- [`centcom-langgraph`](https://github.com/contro1-hq/centcom-langgraph) - LangGraph integration
 
 ## Skill
 
