@@ -164,6 +164,8 @@ With multi-approval enabled, the first approval records an audit event but does 
   `https://github.com/contro1-hq/centcom-sdk/blob/main/skills/centcom-js-sdk.md`
 - LangGraph skill:
   `https://github.com/contro1-hq/centcom-langgraph/blob/main/skills/centcom-langgraph.md`
+- Microsoft AGT companion skill:
+  `https://github.com/contro1-hq/contro1-microsoft-agent-governance-toolkit-integration/blob/main/skills/contro1-microsoft-agent-governance-toolkit-integration.md`
 
 ## Governance readiness
 

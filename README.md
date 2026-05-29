@@ -125,6 +125,7 @@ On denial, a `message` field is included in the `decision` object.
 - [`centcom`](https://github.com/contro1-hq/centcom) - Python SDK
 - [`@contro1/sdk`](https://github.com/contro1-hq/centcom-sdk) - Node/TypeScript SDK
 - [`centcom-langgraph`](https://github.com/contro1-hq/centcom-langgraph) - LangGraph integration
+- [`contro1-microsoft-agent-governance-toolkit-integration`](https://github.com/contro1-hq/contro1-microsoft-agent-governance-toolkit-integration) - Microsoft AGT policy approval companion
 
 ## Skill
 
